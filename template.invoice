@@ -1,0 +1,286 @@
+<div class="invoice">
+	<div id="invoice-status" class="draft"></div>
+
+	<div id="logo-img" class="right">
+		<img src="{{ account.logo }}">
+	</div>
+	<div class="left clear">
+		<div id="bill-to">
+			<b>{{ invoice.contact.name }}</b>
+			<br>
+				<br>
+					{{ invoice.contact.post_address | multi_line }}
+		</div>
+	</div>
+
+	<div class="left clear">
+		<BR><BR><BR>
+		<TABLE>
+			<TR>
+				<TD width="90%">
+					<B>Rechnung</B> Nr. {{ invoice.number }} fällig am {{ invoice.due_date | date: "%d.%m.%Y"}}
+				</TD>
+				<TD style="white-space: nowrap;">Götzis, {{ invoice.invoice_date | date: "%d.%m.%Y"}}
+				</TD>
+			</TR>
+		</TABLE>
+	</div>
+
+	<div class="left clear">
+			<BR><BR>{{ invoice.contact | custom_field: "Anrede" }}
+			<BR><BR>wir stellen Ihnen gemäß Auftrag <I>{{ invoice.subject }}</I> folgende Leistungen in Rechnung.
+                        <BR><BR>
+	</div>
+
+	<div class="left clear">
+	<TABLE WIDTH="100%" style="border:solid 1px; border-color:black">
+	<THEAD>
+		<TR>
+			<TH>Pos</TH>
+			<TH WIDTH="70%">Bezeichnung</TH>
+			<TH># h</TH>
+			<TH>a</TH>
+			<TH>&sum;</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+                 {% for item in invoice.lines %}
+                  <TR>
+			<TD WIDTH="5%">{{ item.position }}</TD>
+			<TD WIDTH="62%">{{ item.description | multi_line }}</TD>
+			<TD WIDTH="9%">{{ item.quantity | numeric: 4 }} h</TD>
+			<TD WIDTH="9%">{{ item.price | currency }}</TD>
+			<TD WIDTH="15%">{{ item.total | currency }}</TD>
+		</TR>
+                  {% endfor %}
+	</TBODY>
+	<TFOOT>
+		<TR>
+			<TD></TD>
+			<TD WIDTH="70%">TOTAL</TD>
+			<TD></TD>
+			<TD></TD>
+			<TD>{{ invoice.subtotal | currency }}</TD>
+		</TR>
+	</TFOOT>
+</TABLE>
+	</div>
+
+
+	<div class="left clear">
+<BR>
+			Wir bitten um abzugsfreie Überweisung innert 14 Tagen auf unten angegebenes Konto.<BR><BR>
+			Vielen Dank für Ihren Auftrag.<BR><BR><BR>
+			Mit besten Grüßen<BR><BR>
+			<B>MEDEVIT OG</B><BR>
+			DI (FH) Descher Marco, MSc<BR>
+			DI (FH) Huster Thomas
+	</div>
+
+	<div id="footer" class="clear">
+		{{ invoice.description | textile }}
+	</div>
+
+
+<style type="text/css">
+        .invoice {
+	font-family: Verdana,Geneva,sans-serif;
+        font-size: 12px;
+        }
+	.invoice #items {
+	width: 100%;
+	}
+	.invoice .left {
+	float: left;
+	}
+	.invoice .right {
+	float: right;
+	}
+	.invoice .clear {
+	clear: both;
+	}
+	.invoice .section {
+	overflow: hidden;
+	}
+	.invoice table {
+	border-collapse: collapse;
+	border-spacing: 0px;
+	}
+	.invoice #invoice-number-label,
+	.invoice .title {
+	border-bottom: 2px solid #cccccc;
+	color: #777777;
+	font-size: 16px !important;
+	font-weight: normal;
+	line-height: 30px;
+	margin-bottom: 2px;
+	}
+	.invoice #invoice-number-label,
+	.invoice #invoice-number-value {
+	border-bottom: 2px solid #cccccc;
+	font-size: 14px;
+	font-weight: bold;
+	}
+	.invoice .highlighted {
+	background: #eeeeee;
+	}
+	.invoice .right-align {
+	text-align: right;
+	}
+	.invoice #logo-img {
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	width: 7cm;
+	}
+	.invoice #logo-img img {
+	max-height: 3cm;
+	max-width: 7cm;
+	}
+	.invoice #company-info {
+	margin-top: -9px;
+	width: 7cm;
+	}
+	.invoice #customer {
+	padding-top: 45px;
+	width: 7cm;
+	}
+	.invoice #customer.title {
+	overflow: hidden;
+	}
+	.invoice #customer > div {
+	float: left;
+	width: 50%;
+	}
+	.invoice #bill-to {
+	width: 7cm;
+	}
+	.invoice #bill-to span {
+	float: left;
+	}
+	.invoice #single-settings {
+	padding-top: 45px;
+	width: 7cm;
+	}
+	.invoice #single-settings > table {
+	width: 100%;
+	}
+	.invoice #single-settings > table .value {
+	line-height: 30px;
+	white-space: nowrap;
+	width: 50%;
+	}
+	.invoice #single-settings > table .label {
+	color: #777777;
+	font-size: 14px;
+	padding-right: 10px;
+	}
+	.invoice #single-settings #invoice-number-label {
+	font-weight: normal;
+	}
+	.invoice #invoice-title {
+	color: #777777;
+	font-size: 34px;
+	line-height: 100%;
+	padding-top: 30px;
+	text-align: center;
+	width: 100%;
+	}
+	.invoice #items {
+	width: 100%;
+	}
+	.invoice #items > table {
+	margin-top: 20px;
+	width: 100%;
+	}
+	.invoice #items > table td {
+	border-bottom: 1px solid #e1e0de;
+	hyphens: auto;
+	moz-hyphens: auto;
+	ms-word-break: break-all;
+	padding: 8px 15px 8px 0px;
+	vertical-align: top;
+	webkit-hyphens: auto;
+	word-break: break-all;
+	word-break: break-word;
+	}
+	.invoice #items > table th {
+	border-bottom: 2px solid #cccccc;
+	padding: 8px 15px 8px 0px;
+	color: #777777;
+	font-size: 14px;
+	white-space: nowrap;
+	}
+	.invoice #items > table .position {
+	min-width: 0.5cm;
+	width: auto;
+	}
+	.invoice #items > table .description {
+	width: auto;
+	}
+	.invoice #items > table .quantity {
+	max-width: 2cm;
+	text-align: right;
+	white-space: nowrap;
+	width: auto;
+	}
+	.invoice #items > table .price-unit {
+	max-width: 2.5cm;
+	ms-text-overflow: ellipsis;
+	o-text-overflow: ellipsis;
+	overflow: hidden;
+	text-align: right;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: auto;
+	}
+	.invoice #items > table .price {
+	max-width: 2.5cm;
+	padding-right: 0px;
+	text-align: right;
+	white-space: nowrap;
+	width: auto;
+	}
+	.invoice #totals {
+	font-size: 14px;
+	max-width: 12cm;
+	min-width: 7.35cm;
+	padding-top: 30px;
+	}
+	.invoice #totals > table {
+	width: 100%;
+	}
+	.invoice #totals > table .value {
+	line-height: 26px;
+	padding-right: 3px;
+	vertical-align: middle;
+	}
+	.invoice #totals .label {
+	color: #777777;
+	padding-left: 11px;
+	white-space: nowrap;
+	}
+	.invoice #totals .label > span {
+	float: left;
+	}
+	.invoice #totals #total {
+	color: black;
+	font-size: 16px;
+	font-weight: bold;
+	}
+	.invoice #totals #tax-text {
+	margin-right: 5px;
+	}
+	.invoice #totals #tax2-text {
+	margin-right: 5px;
+	}
+	.invoice #outstanding-balance > td {
+	padding-top: 10px;
+	}
+	.invoice #expense {
+	clear: both;
+	}
+	.invoice #footer {
+	padding-top: 35px;
+	width: 100%;
+	}
+</style>
