@@ -124,11 +124,11 @@ class Changeset < ActiveRecord::Base
 
     referenced_issues = []
 
-    comments.scan(/([\s\(\[,-]|^)((#{kw_regexp})[\s:]+)?(#\d+(\s+@#{TIMELOG_RE})?([\s,;&]+#\d+(\s+@#{TIMELOG_RE})?)*)(?=[[:punct:]]|\s|<|$)/i) do |match|
+    comments.scan(/([\s\(\[,-]|^)((#{kw_regexp})[\s:]+)?(\[\d+\](\s+@#{TIMELOG_RE})?([\s,;&]+#\d+(\s+@#{TIMELOG_RE})?)*)(?=[[:punct:]]|\s|<|$)/i) do |match|
       action, refs = match[2], match[3]
       next unless action.present? || ref_keywords_any
 
-      refs.scan(/#(\d+)(\s+@#{TIMELOG_RE})?/).each do |m|
+      refs.scan(/\[(\d+)\](\s+@#{TIMELOG_RE})?/).each do |m|
         issue, hours = find_referenced_issue_by_id(m[0].to_i), m[2]
         if issue
           referenced_issues << issue
