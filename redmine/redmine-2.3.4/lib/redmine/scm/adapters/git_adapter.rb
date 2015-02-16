@@ -333,6 +333,20 @@ module Redmine
           end
         end
 
+        def revision_branches(identifier)
+          cmd_args = %w|branch --contains|
+          cmd_args << identifier
+          branches = []
+          scm_cmd(*cmd_args) do |io|
+            io.each_line do |line|
+              branches << line.match('\s*\*?\s*(.*)$')[1]
+            end
+          end
+          branches.sort!
+          rescue ScmCommandAborted
+            nil
+        end
+
         def diff(path, identifier_from, identifier_to=nil)
           path ||= ''
           cmd_args = []

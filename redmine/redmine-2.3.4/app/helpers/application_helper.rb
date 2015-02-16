@@ -113,6 +113,12 @@ module ApplicationHelper
       )
   end
 
+  # Generates a link to a SCM repository
+  def link_to_repository(rev, project, options={})
+    text = options.delete(:text) || rev
+    link_to(text, {:controller => 'repositories', :action =>'show', :id => project, :rev => rev}, :title => rev)
+  end
+
   # Generates a link to a message
   def link_to_message(message, options={}, html_options = nil)
     link_to(

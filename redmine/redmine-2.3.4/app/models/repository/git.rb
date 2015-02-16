@@ -222,12 +222,24 @@ class Repository::Git < Repository
         # that it's not in the db.
         save_revision(rev)
       end
+      save_revision_branches(rev)
     end
     h["heads"] = repo_heads.dup
     merge_extra_info(h)
     self.save
   end
   private :save_revisions
+
+  def save_revision_branches(rev)
+    db_rev = find_changeset_by_name(rev.scmid)
+    unless db_rev.nil?
+      branches = scm.revision_branches(rev.scmid)
+      unless branches.nil?
+        db_rev.branches = branches.join(',')
+        db_rev.save
+      end
+    end
+  end
 
   def save_revision(rev)
     parents = (rev.parents || []).collect{|rp| find_changeset_by_name(rp)}.compact
