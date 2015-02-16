@@ -80,30 +80,52 @@ module Redmine
 
         def branches
           return @branches if @branches
-          @branches = []
-          cmd_args = %w|branch --no-color --verbose --no-abbrev|
-          git_cmd(cmd_args) do |io|
-            io.each_line do |line|
-              branch_rev = line.match('\s*(\*?)\s*(.*?)\s*([0-9a-f]{40}).*$')
-              bran = GitBranch.new(branch_rev[2])
-              bran.revision =  branch_rev[3]
-              bran.scmid    =  branch_rev[3]
-              bran.is_default = ( branch_rev[1] == '*' )
-              @branches << bran
-            end
-          end
-          @branches.sort!
-        rescue ScmCommandAborted
-          nil
+          refs
+          @branches
         end
 
         def tags
           return @tags if @tags
-          cmd_args = %w|tag|
+          refs
+          @tags
+        end
+        
+        def refs
+          return @refs if @refs
+          cmd_args = %w|show-ref --head --tags --heads --dereference|
           git_cmd(cmd_args) do |io|
-            @tags = io.readlines.sort!.map{|t| t.strip}
+            head = nil
+            @refs = {}
+            @branches = []
+            @tags = []
+            io.each do |line|
+              rev,ref = line.split
+              if m = ref.match(%r|^HEAD$|)
+                head = rev
+              elsif m = ref.match(%r|^refs/heads/(.*)|)
+                @refs[rev] ||= []
+                @refs[rev] << m[1]
+                b = GitBranch.new(m[1])
+                b.revision = rev
+                b.scmid = rev
+                b.is_default = false
+                @branches << b
+              elsif m = ref.match(%r|^refs/tags/(.*)\^{}$|)
+                @refs[rev] ||= []
+                @refs[rev] << "tag: #{m[1]}"
+                @tags << m[1]
+              end
+            end
+            @branches.sort!.map!{|b|
+              b.is_default = true if b.revision == head
+              b  
+            }
+            @tags.sort!
           end
+          @refs
         rescue ScmCommandAborted
+          @branches = nil
+          @tags = nil
           nil
         end
 

@@ -68,11 +68,21 @@ class Repository::Git < Repository
 
   # Returns the readable identifier for the given git changeset
   def self.format_changeset_identifier(changeset)
-    changeset.revision[0, 8]
+    str = changeset.revision[0, 8]
+    h = changeset.repository.extra_info
+    unless h.nil? || h['refs'].nil?
+      ref =h['refs'][changeset.revision.to_s]
+      str += ' [' + ref.join(', ') + ']' if ref.respond_to?('join')
+    end
+    str
   end
 
   def branches
     scm.branches
+  end
+  
+  def refs
+    scm.refs
   end
 
   def tags
@@ -130,6 +140,8 @@ class Repository::Git < Repository
   def fetch_changesets
     scm_brs = branches
     return if scm_brs.nil? || scm_brs.empty?
+    merge_extra_info('refs' => refs)
+    self.save
 
     h1 = extra_info || {}
     h  = h1.dup
