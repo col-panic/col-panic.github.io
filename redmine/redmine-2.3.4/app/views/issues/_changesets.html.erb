@@ -6,7 +6,7 @@
 		<% if changeset.branches? %>
 		<span style="float:right;"><%= changeset.branches.split(',').collect{ |branch|
 			changeset.repository.branches.include?(branch) ?
-			link_to_repository(branch, changeset.project, :text => branch) : nil }.compact.join(' / ') %></span>
+			branch +'@'+changeset.repository.identifier : nil }.compact.join(' / ') %></span>
 		<% end %>
 		<br />
 		<span class="author"><%= authoring(changeset.committed_on, changeset.author) %></span>

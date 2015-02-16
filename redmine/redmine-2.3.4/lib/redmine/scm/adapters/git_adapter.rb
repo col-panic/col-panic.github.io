@@ -337,7 +337,7 @@ module Redmine
           cmd_args = %w|branch --contains|
           cmd_args << identifier
           branches = []
-          scm_cmd(*cmd_args) do |io|
+          git_cmd(cmd_args) do |io|
             io.each_line do |line|
               branches << line.match('\s*\*?\s*(.*)$')[1]
             end
