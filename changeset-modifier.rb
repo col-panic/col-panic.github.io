@@ -10,7 +10,7 @@
     )
     /x
 
-a = "[3263] DayDateCombo [2653] shows different labels for negative days"
+a = "[3263]DayDateCombo [2653] shows different labels for negative days"
 ref_keywords = "*".split(",").collect(&:strip)
 fix_keywords = "fixes,closes".split(",").collect(&:strip) 
 kw_regexp = (ref_keywords + fix_keywords).collect{|kw| Regexp.escape(kw)}.join("|")
@@ -25,3 +25,4 @@ a.scan(/([\s\(\[,-]|^)((#{kw_regexp})[\s:]+)?(\[\d+\](\s+@#{TIMELOG_RE})?([\s,;&
 		puts "->ref: "+m[0]
 	end
 end
+
